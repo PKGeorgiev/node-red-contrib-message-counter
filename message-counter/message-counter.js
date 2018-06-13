@@ -6,8 +6,10 @@ module.exports = function(RED) {
         RED.nodes.createNode(this, config);     
         
         var node = this;
-        var ctr = 0;
-        var ctrTotal = 0;
+        var ctr = {};
+        var ctrTotal = {};
+        var allctr = 0;
+        
         
         node.status({ }); 
         node.units = config.units;
@@ -21,21 +23,23 @@ module.exports = function(RED) {
           
           console.log(new Date());
           console.log("INFO: " + node.interval + " | " + node.units + " | " + node.alignToClock);
-          
-          msg = {};
-          msg.payload = ctr;
-          msg.interval = parseInt(node.interval);
-          msg.units = node.units;
-          msg.generator = node.generator;
-          msg.alignToClock = node.alignToClock;
-          msg.totalMessageCount = ctrTotal;
-          msg.isReset = isReset;
-          
-          if (isReset) {
-            ctr = 0;
-          };
-          
-          node.send([msg, null]);
+          for(var index in ctr) {
+          	msg = {};
+          	msg.topic = index
+          	msg.payload = ctr[index];
+          	msg.interval = parseInt(node.interval);
+          	msg.units = node.units;
+          	msg.generator = node.generator;
+          	msg.alignToClock = node.alignToClock;
+          	msg.totalMessageCount = ctrTotal[index];
+          	msg.isReset = isReset;
+			  if (isReset) {
+				//delete ctr[index];
+				ctr[index] = 0;
+				allctr = 0;
+			  };     
+          	node.send([msg, null]);
+          }
           showCount();
           
         }
@@ -118,7 +122,7 @@ module.exports = function(RED) {
         }
         
         function showCount() {
-          node.status({ fill: "green", shape: "dot", text: ctr });
+          node.status({ fill: "green", shape: "dot", text: allctr });
         };
         
         showCount();
@@ -143,11 +147,20 @@ module.exports = function(RED) {
                 node.status({ fill: "red", shape: "dot", text: "Invalid control command: " + msg.payload });
               }
             }
-            
           } else {
             // Count messages
-            ctr++;
-            ctrTotal++;
+            if (typeof ctr[msg.topic] == 'undefined') {
+            	ctr[msg.topic]=1;
+            } else {
+            	ctr[msg.topic]++;
+            }
+            
+            if (typeof ctrTotal[msg.topic] == 'undefined') {
+            	ctrTotal[msg.topic] = 1;
+            } else {
+            	ctrTotal[msg.topic]++;	
+            }
+            allctr++;
             showCount();
             node.send([null, msg]);            
           }
