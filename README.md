@@ -1,6 +1,6 @@
 Message Counter Node
 
-Counts messages within given interval.
+Counts messages by topic within a given interval.
 
 The node has two outputs. <b>Output 1</b> will generate summary message on every interval. <b>Output 2</b> will repeat incoming (non-control) messages. It can be used to continue your flow. 
 Messages are counted on regular intervals when a measuring message arrives. You can choose between two types of measuring message generators:
