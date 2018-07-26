@@ -2,25 +2,30 @@
 module.exports = function(RED) {
  
     function MessageCounterNode(config) {
-        console.log('CTOR: MessageCounterNode');
-        RED.nodes.createNode(this, config);     
-        
-        var node = this;
+		
+		var node = this;
         var ctr = 0;
         var ctrTotal = 0;
+		
+		if (node.debugMode)
+			console.log('CTOR: MessageCounterNode');
+        RED.nodes.createNode(this, config);
         
         node.status({ }); 
         node.units = config.units;
         node.interval = config.interval;
         node.alignToClock = config.alignToClock;
         node.generator = config.generator;
-        
-        console.log("INFO! " + node.interval + " | " + node.units + " | " + node.alignToClock);
+		node.debugMode = config.debugMode;
+		
+        if (node.debugMode)
+			console.log("INFO! " + node.interval + " | " + node.units + " | " + node.alignToClock);
         
         function measure(isReset) {
-          
-          console.log(new Date());
-          console.log("INFO: " + node.interval + " | " + node.units + " | " + node.alignToClock);
+          if (node.debugMode){
+			console.log(new Date());
+			console.log("INFO: " + node.interval + " | " + node.units + " | " + node.alignToClock);
+		  }
           
           msg = {};
           msg.payload = ctr;
@@ -81,7 +86,8 @@ module.exports = function(RED) {
         function runClock() {        
         
             var timeToNextTick = getRemainingMs(node.units, node.interval);           
-            console.log("timeToNextTick: " + timeToNextTick);
+			if (node.debugMode)
+				console.log("timeToNextTick: " + timeToNextTick);
             
             return setTimeout(function() {
                 measure(true);
@@ -98,7 +104,8 @@ module.exports = function(RED) {
             node.internalTimer = runClock();
           } else {
             var interval = intervalToMs(node.units, node.interval);
-            console.log("Interval: " + interval);
+			if (node.debugMode)
+				console.log("Interval: " + interval);
             node.internalTimer = setInterval(measure, interval);
           };
           
@@ -157,7 +164,8 @@ module.exports = function(RED) {
         
         this.on('close', function() {
           // tidy up any state
-          console.log("CLEANUP");
+		  if (node.debugMode)
+			console.log("CLEANUP");
           stopGenerator();
         });
     }

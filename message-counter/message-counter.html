@@ -11,7 +11,8 @@
             units: { value: "minutes" },
             interval: { value: 1 },
             alignToClock: { value: true },
-            generator: { value: "internal" }
+            generator: { value: "internal" },
+			debugMode: { value: false }
         },
         inputs: 1,
         outputs: 2,
@@ -61,6 +62,12 @@
         <label for="node-input-alignToClock">&nbsp;</label>
         <input type="checkbox" id="node-input-alignToClock" style="display: inline-block;width: auto;vertical-align: top;">
         <label for="node-input-alignToClock" style="width: 70%;" >Align intervals with RTC?</label>
+
+    </div>
+	<div class="form-row">
+        <label for="node-input-debugMode">&nbsp;</label>
+		<input type="checkbox" id="node-input-debugMode" style="display: inline-block;width: auto;vertical-align: top;">
+		<label for="node-input-debugMode" style="width: 70%;" >Enable node debug mode (logging)?</label>
     </div>
 </script>
 
